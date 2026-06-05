@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { useLiveQuery } from "@tanstack/react-db";
 import { listCollection } from "@/src/db";
@@ -24,7 +24,6 @@ export const Route = createFileRoute("/")({
 });
 
 function RouteComponent() {
-  const [showCreationDialog, setShowCreationDialog] = useState(false);
   const { data: lists } = useLiveQuery((q) => q.from({ pref: listCollection }));
 
   const onCreateList: FormikValues["onsubmit"] = (values: { name: string }) => {
@@ -38,15 +37,16 @@ function RouteComponent() {
         className={`grid grid-flow-row grid-cols-${Math.max(lists.length + 1, 3)} gap-4 self-center`}
       >
         {_.sortBy(lists, ["name", "id"]).map((list) => {
-          return <Button key={list.id}>{list.name}</Button>;
+          return (
+            <Link key={list.id} to={`/list/${list.id}`}>
+              <Button>{list.name}</Button>
+            </Link>
+          );
         })}
 
         <Dialog>
           <DialogTrigger asChild>
-            <Button
-              className={"flex flex-col gap-2 h-auto"}
-              onClick={() => setShowCreationDialog(true)}
-            >
+            <Button className={"flex flex-col gap-2 h-auto"}>
               <Plus /> Crea lista
             </Button>
           </DialogTrigger>
