@@ -1,5 +1,4 @@
-import { createCollection } from "@tanstack/react-db";
-import { localStorageCollectionOptions } from "@tanstack/react-db";
+import { createCollection, localStorageCollectionOptions } from "@tanstack/react-db";
 import { z } from "zod";
 import { List, ListItem, Item, ItemTag } from "@/src/types";
 
