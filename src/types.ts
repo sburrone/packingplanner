@@ -22,3 +22,10 @@ export interface ItemTag {
   name: string;
   icon?: string;
 }
+
+export enum Sorting {
+  ADDED_ASC = "ADDED_ASC",
+  ADDED_DESC = "ADDED_DESC",
+  ALPHA_ASC = "ALPHA_ASC",
+  ALPHA_DESC = "ALPHA_DESC",
+}
