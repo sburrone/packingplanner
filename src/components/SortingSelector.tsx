@@ -3,16 +3,51 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLab
 import { Button } from "@/components/ui/button";
 import { ArrowDown, ArrowDownAZ, ArrowDownZA, ArrowUp, Clock, Clock8 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 interface SortingProps {
   sorting: Sorting;
-  onChange: (sorting: Sorting) => void;
-  completedFirst: boolean;
-  setCompletedFirst: (completedFirst: boolean) => void;
+  setSorting: (sorting: Sorting) => void;
+  groupCompleted: boolean;
+  setGroupCompleted: (groupCompleted: boolean) => void;
 }
 
 const SortingSelector: React.FC<SortingProps> = (props) => {
-  const { sorting, onChange, setCompletedFirst, completedFirst } = props;
+  const { sorting, setSorting, setGroupCompleted, groupCompleted } = props;
+
+  const getButton = () => {
+    switch (sorting) {
+      case Sorting.ADDED_ASC:
+      default:
+        return (
+          <>
+            <Clock />
+            <ArrowUp />
+          </>
+        );
+      case Sorting.ADDED_DESC:
+        return (
+          <>
+            <Clock8 />
+            <ArrowDown />
+          </>
+        );
+      case Sorting.ALPHA_ASC:
+        return (
+          <>
+            <ArrowDownAZ />
+            <ArrowUp />
+          </>
+        );
+      case Sorting.ALPHA_DESC:
+        return (
+          <>
+            <ArrowDownZA />
+            <ArrowDown />
+          </>
+        );
+    }
+  };
 
   const getOption = (sorting: Sorting) => {
     switch (sorting) {
@@ -47,17 +82,18 @@ const SortingSelector: React.FC<SortingProps> = (props) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button>{getOption(sorting)}</Button>
+        <Button>Ordina {getButton()}</Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className={"w-56"}>
         <DropdownMenuLabel className={"flex flex-row gap-3 items-center"}>
-          <Checkbox checked={completedFirst} onCheckedChange={setCompletedFirst} /> Raggruppa completati
+          <Checkbox id={"groupCompleted"} checked={groupCompleted} onCheckedChange={setGroupCompleted} />
+          <Label htmlFor={"groupCompleted"}>Raggruppa completati</Label>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           {Object.values(Sorting).map((s) => {
             return (
-              <DropdownMenuItem key={s} onClick={() => onChange(s as Sorting)}>
+              <DropdownMenuItem key={s} onClick={() => setSorting(s as Sorting)}>
                 {getOption(s as Sorting)}
               </DropdownMenuItem>
             );

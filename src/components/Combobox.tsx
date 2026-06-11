@@ -4,6 +4,7 @@ import { Plus, X } from "lucide-react";
 import { useState } from "react";
 import { Autocomplete, AutocompleteProps } from "@mui/material";
 import { clsx } from "clsx";
+import { cn } from "@/lib/utils";
 
 type IdentifiableNamed = {
   id: string;
@@ -58,10 +59,9 @@ const Combobox = <T extends IdentifiableNamed>(props: ComboboxProps<T>) => {
             );
           }}
           renderOption={(props, option) => {
-            const { key, ...others } = props;
-            console.log(others);
+            const { key, className, ...others } = props;
             return (
-              <li key={key} style={{ minHeight: "calc(var(--spacing) * 4)" }} {...others}>
+              <li key={key} className={cn([className, "font-sans"])} style={{ minHeight: "calc(var(--spacing) * 4)" }} {...others}>
                 {option.name}
               </li>
             );
@@ -75,7 +75,7 @@ const Combobox = <T extends IdentifiableNamed>(props: ComboboxProps<T>) => {
         )}
 
         <Button
-          className={inputValue ? "w-10" : "w-20"}
+          className={`bg-chart-4 ${inputValue ? "w-10" : "w-20"}`}
           onClick={() => {
             if (value) onAdd(value);
             else if (inputValue) onAdd(createOption(inputValue));
