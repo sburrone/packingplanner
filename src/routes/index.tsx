@@ -4,20 +4,12 @@ import { useLiveQuery } from "@tanstack/react-db";
 import { listCollection } from "@/src/db";
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Formik, FormikValues } from "formik";
 import { v6 as uuid } from "uuid";
 import _ from "lodash";
+import { PageHeader } from "@/src/components/PageHeader";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -32,10 +24,10 @@ function RouteComponent() {
 
   return (
     <>
-      <p className={"p-4"}>Liste ({lists.length})</p>
-      <div
-        className={`grid grid-flow-row grid-cols-${Math.max(lists.length + 1, 3)} gap-4 self-center`}
-      >
+      <PageHeader title={"Valigiatore"} />
+
+      <p className={"p-4 text-center"}>Liste ({lists.length})</p>
+      <div className={`grid grid-flow-row grid-cols-${Math.max(lists.length + 1, 3)} gap-4 self-center max-w-96 mx-auto`}>
         {_.sortBy(lists, ["name", "id"]).map((list) => {
           return (
             <Link key={list.id} to={`/list/${list.id}`}>
@@ -58,33 +50,15 @@ function RouteComponent() {
                 if (!values.name) return { name: "Richiesto" };
               }}
             >
-              {({
-                values,
-                errors,
-                touched,
-                handleChange,
-                handleBlur,
-                handleSubmit,
-                isSubmitting,
-                isValid,
-              }) => (
+              {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting, isValid }) => (
                 <form onSubmit={handleSubmit} className={"grid gap-4"}>
                   <DialogHeader>
                     <DialogTitle>Crea lista</DialogTitle>
-                    <DialogDescription>
-                      Scegli un nome e un'icona per la nuova lista.
-                      Successivamente la potrai modificare.
-                    </DialogDescription>
+                    <DialogDescription>Scegli un nome e un'icona per la nuova lista. Successivamente la potrai modificare.</DialogDescription>
                     <div className={"grid gap-4"}>
                       <div className={"grid gap-3"}>
                         <label htmlFor={"name-1"}>Nome</label>
-                        <Input
-                          name={"nome"}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          value={values.name}
-                          aria-label={"nome"}
-                        />
+                        <Input name={"nome"} onChange={handleChange} onBlur={handleBlur} value={values.name} aria-label={"nome"} />
                         {errors.name && touched.name && errors.name}
                       </div>
                     </div>
@@ -94,10 +68,7 @@ function RouteComponent() {
                       <Button variant={"neutral"}>Cancella</Button>
                     </DialogClose>
                     <DialogClose asChild>
-                      <Button
-                        disabled={isSubmitting || !isValid}
-                        type={"submit"}
-                      >
+                      <Button disabled={isSubmitting || !isValid} type={"submit"}>
                         Crea
                       </Button>
                     </DialogClose>

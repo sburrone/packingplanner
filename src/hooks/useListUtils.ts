@@ -1,8 +1,6 @@
 import { ChangeEventHandler, useState } from "react";
-import { Item, List, ListItem, Sorting } from "@/src/types";
+import { Item, List, Sorting } from "@/src/types";
 import { itemCollection, listCollection } from "@/src/db";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Route } from "@/src/routes/list/$listid";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import _ from "lodash";
 
@@ -60,7 +58,7 @@ export const useListUtils = ({ listid }: { listid: string }) => {
   const itemsCompleted = currentList?.items.filter((item) => item.completed) ?? [];
   const itemsToComplete = currentList?.items.filter((item) => !item.completed) ?? [];
 
-  const [listNameInput, setListNameInput] = useState(currentList?.name ?? "");
+  const [listNameInput, setListNameInput] = useState<string>(currentList?.name ?? "");
   const handleListNameInputChange: ChangeEventHandler<HTMLInputElement, HTMLInputElement> = (e) => {
     setListNameInput((e.target as HTMLInputElement).value);
   };
@@ -70,6 +68,31 @@ export const useListUtils = ({ listid }: { listid: string }) => {
       const list = l as unknown as List;
       list.name = listNameInput;
     });
+  };
+
+  const toggleEditing = () => {
+    if (!isEditing) setIsEditing(true);
+    else {
+      setIsEditing(false);
+      if (currentList?.name && currentList.name !== listNameInput) {
+        handleListNameChange();
+      }
+    }
+  };
+
+  const batchReset = (val?: boolean) => {
+    if (!isEditing) return;
+
+    listCollection.update(listid, (l) => {
+      const list = l as unknown as List;
+      list.items.forEach((item) => {
+        item.completed = val ?? false;
+      });
+    });
+  };
+
+  const deleteList = () => {
+    listCollection.delete(listid);
   };
 
   return {
@@ -85,10 +108,11 @@ export const useListUtils = ({ listid }: { listid: string }) => {
     itemsCompleted,
     itemsToComplete,
     isEditing,
-    setIsEditing,
     listNameInput,
     handleListNameInputChange,
-    handleListNameChange,
+    toggleEditing,
     handleDeleteItem,
+    batchReset,
+    deleteList,
   };
 };

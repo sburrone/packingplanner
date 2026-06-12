@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Plus, X } from "lucide-react";
 import { useState } from "react";
 import { Autocomplete, AutocompleteProps } from "@mui/material";
-import { clsx } from "clsx";
 import { cn } from "@/lib/utils";
 
 type IdentifiableNamed = {

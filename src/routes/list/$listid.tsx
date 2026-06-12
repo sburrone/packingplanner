@@ -1,13 +1,11 @@
-import { createFileRoute, useLocation } from "@tanstack/react-router";
-import { eq, useLiveQuery } from "@tanstack/react-db";
-import { itemCollection, listCollection } from "@/src/db";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { itemCollection } from "@/src/db";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Item, List, ListItem, Sorting } from "@/src/types";
+import { Item, ListItem } from "@/src/types";
 import Combobox from "@/src/components/Combobox";
 import { v6 as uuid } from "uuid";
 import { Button } from "@/components/ui/button";
-import { Check, Pencil, Save, Trash } from "lucide-react";
-import { useState } from "react";
+import { Check, Home, Pencil, RotateCcw, Save, Trash } from "lucide-react";
 import SortingSelector from "@/src/components/SortingSelector";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Slide } from "@mui/material";
@@ -15,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { useListUtils } from "@/src/hooks/useListUtils";
 import { ButtonGroup, ButtonGroupSeparator } from "@/components/ui/button-group";
 import { Input } from "@/components/ui/input";
+import { PageHeader } from "@/src/components/PageHeader";
 
 export const Route = createFileRoute("/list/$listid")({
   component: RouteComponent,
@@ -38,8 +37,7 @@ function RouteComponent() {
     listNameInput,
     handleListNameInputChange,
     isEditing,
-    setIsEditing,
-    handleListNameChange,
+    toggleEditing,
     handleDeleteItem,
   } = useListUtils({
     listid,
@@ -89,30 +87,51 @@ function RouteComponent() {
 
   return (
     <>
-      <div className={"flex flex-col gap-2 items-center w-96 max-w-dvw justify-center px-4 mx-auto"}>
-        {isEditing ? (
-          <div className={"flex flex-row w-full"}>
-            <Input className={"text-xl font-sans bg-foreground text-main-foreground flex-1"} aria-label={"Rinomina lista"} value={listNameInput} onChange={handleListNameInputChange} />
-            <Button className="bg-chart-4" onClick={handleListNameChange} disabled={!listNameInput || listNameInput === currentList.name}>
-              <Save />
-            </Button>
-          </div>
-        ) : (
-          <h2>{currentList.name}</h2>
-        )}
+      <PageHeader
+        title={
+          isEditing ? (
+            <div className={"flex flex-row w-96 mx-auto px-4"}>
+              <Input className={"text-xl font-sans bg-foreground text-main-foreground flex-1 w-full h-9"} aria-label={"Rinomina lista"} value={listNameInput} onChange={handleListNameInputChange} />
+            </div>
+          ) : (
+            currentList.name
+          )
+        }
+      />
 
+      <div className={"flex flex-col gap-2 items-center w-96 max-w-dvw justify-center px-4 mx-auto"}>
         <div className={"flex flex-row justify-between w-full mb-4"}>
-          <Button className={isEditing ? "bg-chart-3" : undefined} onClick={() => setIsEditing(!isEditing)}>
-            {isEditing ? (
+          <ButtonGroup>
+            <Link to={`/`}>
+              <Button>
+                <Home />
+              </Button>
+            </Link>
+            <ButtonGroupSeparator />
+            <Button className={isEditing ? "bg-chart-4" : undefined} onClick={toggleEditing}>
+              {isEditing ? (
+                <>
+                  <Check />
+                </>
+              ) : (
+                <>
+                  <Pencil />
+                </>
+              )}
+            </Button>
+            {isEditing && (
               <>
-                <Check /> Smetti di modificare
-              </>
-            ) : (
-              <>
-                <Pencil /> Salva
+                <ButtonGroupSeparator />
+                <Button className="bg-chart-3">
+                  <RotateCcw />
+                </Button>
+                <ButtonGroupSeparator />
+                <Button className="bg-chart-2">
+                  <Trash />
+                </Button>
               </>
             )}
-          </Button>
+          </ButtonGroup>
 
           <SortingSelector sorting={sorting} setSorting={handleSortingChange} groupCompleted={groupCompleted} setGroupCompleted={handleGroupCompletedChange} />
         </div>
