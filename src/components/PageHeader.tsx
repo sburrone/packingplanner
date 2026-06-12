@@ -13,7 +13,7 @@ export const PageHeader: React.FC<PageHeaderProps> = (props) => {
       {typeof title === "string" ? (
         <h2 className={"flex max-w-full overflow-hidden text-center text-nowrap"}>
           <span className={"shrink-0 text-main"}>{title.slice(0, 1)}</span>
-          <span className={'min-w-0 overflow-hidden text-ellipsis whitespace-nowrap"'}>{title.slice(1)}</span>
+          <span className={"min-w-0 overflow-hidden text-ellipsis whitespace-nowrap"}>{title.slice(1)}</span>
         </h2>
       ) : (
         title
