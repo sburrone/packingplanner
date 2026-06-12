@@ -14,6 +14,8 @@ import { useListUtils } from "@/src/hooks/useListUtils";
 import { ButtonGroup, ButtonGroupSeparator } from "@/components/ui/button-group";
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/src/components/PageHeader";
+import ListToolbar from "@/src/routes/list/ListToolbar";
+import ListItemElement from "@/src/routes/list/ListItemElement";
 
 export const Route = createFileRoute("/list/$listid")({
   component: RouteComponent,
@@ -45,46 +47,6 @@ function RouteComponent() {
 
   if (!currentList) return;
 
-  const itemRenderer = (_li: ListItem) => {
-    const item = itemCollection.get(_li.itemId) as Item;
-    if (!item) return;
-
-    if (isEditing)
-      return (
-        <div key={item.id} className={"flex flex-row gap-3 items-center w-80 h-5"}>
-          <span className={"text-left text-main-foreground flex-1"}>{item.name}</span>
-          <ButtonGroup>
-            <Button className={"bg-chart-5 h-7 w-7"} variant="noShadow" disabled>
-              <Pencil />
-            </Button>
-            <ButtonGroupSeparator />
-            <Button className={"bg-chart-2 h-7 w-7"} variant="noShadow" onClick={() => handleDeleteItem(item.id)}>
-              <Trash />
-            </Button>
-          </ButtonGroup>
-        </div>
-      );
-    return (
-      <div key={item.id} className={"flex flex-row gap-3 items-center w-80 h-5"}>
-        <Checkbox
-          className="transition-transform duration-200 ease-out data-[state=checked]:scale-110 data-[state=unchecked]:scale-100"
-          id={item.id}
-          checked={_li.completed}
-          onCheckedChange={(checked) => handleCheck(item.id, checked === true)}
-        />
-        <Label htmlFor={item.id} className={"w-full text-left"}>
-          <span
-            className={`relative origin-left text-main-foreground after:absolute after:left-0 after:top-1/2 after:h-0.5 after:w-full after:-translate-y-1/2 after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-300 after:ease-out ${
-              _li.completed ? "after:scale-x-100" : "after:scale-x-0"
-            }`}
-          >
-            {item.name}
-          </span>
-        </Label>
-      </div>
-    );
-  };
-
   return (
     <>
       <PageHeader
@@ -100,41 +62,14 @@ function RouteComponent() {
       />
 
       <div className={"flex flex-col gap-2 items-center w-96 max-w-dvw justify-center px-4 mx-auto"}>
-        <div className={"flex flex-row justify-between w-full mb-4"}>
-          <ButtonGroup>
-            <Link to={`/`}>
-              <Button>
-                <Home />
-              </Button>
-            </Link>
-            <ButtonGroupSeparator />
-            <Button className={isEditing ? "bg-chart-4" : undefined} onClick={toggleEditing}>
-              {isEditing ? (
-                <>
-                  <Check />
-                </>
-              ) : (
-                <>
-                  <Pencil />
-                </>
-              )}
-            </Button>
-            {isEditing && (
-              <>
-                <ButtonGroupSeparator />
-                <Button className="bg-chart-3">
-                  <RotateCcw />
-                </Button>
-                <ButtonGroupSeparator />
-                <Button className="bg-chart-2">
-                  <Trash />
-                </Button>
-              </>
-            )}
-          </ButtonGroup>
-
-          <SortingSelector sorting={sorting} setSorting={handleSortingChange} groupCompleted={groupCompleted} setGroupCompleted={handleGroupCompletedChange} />
-        </div>
+        <ListToolbar
+          isEditing={isEditing}
+          toggleEditing={toggleEditing}
+          handleSortingChange={handleSortingChange}
+          sorting={sorting}
+          handleGroupCompletedChange={handleGroupCompletedChange}
+          groupCompleted={groupCompleted}
+        />
 
         {!isEditing && <Combobox options={itemOptions as Item[]} createOption={(name) => ({ id: uuid(), name, tags: [] })} onAdd={handleAdd} />}
 
@@ -144,19 +79,31 @@ function RouteComponent() {
               <Slide direction={"right"} in={!!itemsToComplete.length} unmountOnExit={true}>
                 <AccordionItem value={"toComplete"}>
                   <AccordionTrigger className={"h-10"}>Da completare ({itemsToComplete.length})</AccordionTrigger>
-                  <AccordionContent className={"flex flex-col gap-4 bg-main p-4 pt-2 pb-2"}>{itemsToComplete.map(itemRenderer)}</AccordionContent>
+                  <AccordionContent className={"flex flex-col gap-4 bg-main p-4 pt-2 pb-2"}>
+                    {itemsToComplete.map((li) => (
+                      <ListItemElement key={li.itemId} listItem={li} isEditing={isEditing} handleCheck={handleCheck} handleDeleteItem={handleDeleteItem} />
+                    ))}
+                  </AccordionContent>
                 </AccordionItem>
               </Slide>
               <Slide direction={"right"} in={!!itemsCompleted.length} unmountOnExit={true}>
                 <AccordionItem value={"completed"}>
                   <AccordionTrigger className={"h-10"}>Completati ({itemsCompleted.length})</AccordionTrigger>
-                  <AccordionContent className={"flex flex-col gap-4 bg-main p-4 pt-2 pb-2"}>{itemsCompleted.map(itemRenderer)}</AccordionContent>
+                  <AccordionContent className={"flex flex-col gap-4 bg-main p-4 pt-2 pb-2"}>
+                    {itemsCompleted.map((li) => (
+                      <ListItemElement key={li.itemId} listItem={li} isEditing={isEditing} handleCheck={handleCheck} handleDeleteItem={handleDeleteItem} />
+                    ))}
+                  </AccordionContent>
                 </AccordionItem>
               </Slide>
             </Accordion>
           </>
         ) : (
-          <div className={"flex flex-col gap-4 bg-main p-4 pt-2 pb-2"}>{fullList.map(itemRenderer)}</div>
+          <div className={"flex flex-col gap-4 bg-main p-4 pt-2 pb-2"}>
+            {fullList.map((li) => (
+              <ListItemElement key={li.itemId} listItem={li} isEditing={isEditing} handleCheck={handleCheck} handleDeleteItem={handleDeleteItem} />
+            ))}
+          </div>
         )}
       </div>
     </>
