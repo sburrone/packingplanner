@@ -5,6 +5,17 @@ import { Button } from "@/components/ui/button";
 import { Home, Check, Pencil, RotateCcw, Trash } from "lucide-react";
 import SortingSelector from "@/src/components/SortingSelector";
 import { Sorting } from "@/src/types";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface ListToolbarProps {
   isEditing: boolean;
@@ -13,10 +24,12 @@ interface ListToolbarProps {
   sorting: Sorting;
   handleGroupCompletedChange: (groupCompleted: boolean) => void;
   groupCompleted: boolean;
+  batchReset: (val?: boolean) => void;
+  deleteList: () => void;
 }
 
 const ListToolbar: FC<ListToolbarProps> = (props) => {
-  const { isEditing, toggleEditing, handleGroupCompletedChange, handleSortingChange, sorting, groupCompleted } = props;
+  const { isEditing, toggleEditing, handleGroupCompletedChange, handleSortingChange, sorting, groupCompleted, batchReset, deleteList } = props;
 
   return (
     <div className={"flex flex-row justify-between w-full mb-4"}>
@@ -41,13 +54,45 @@ const ListToolbar: FC<ListToolbarProps> = (props) => {
         {isEditing && (
           <>
             <ButtonGroupSeparator />
-            <Button className="bg-chart-3">
-              <RotateCcw />
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button className="bg-chart-3">
+                  <RotateCcw />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Sicurə?</AlertDialogTitle>
+                  <AlertDialogDescription>La lista verrà reimpostata. Non puoi tornare indietro.</AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancella</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => batchReset()}>Continua</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
             <ButtonGroupSeparator />
-            <Button className="bg-chart-2">
-              <Trash />
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button className="bg-chart-2">
+                  <Trash />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Sicurə?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    La lista verrà eliminata. Non la potrai recuperare.
+                    <br />
+                    Gli oggetti inseriti nella lista non verranno eliminati e saranno inseribili in altre liste.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancella</AlertDialogCancel>
+                  <AlertDialogAction onClick={deleteList}>Continua</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </>
         )}
       </ButtonGroup>

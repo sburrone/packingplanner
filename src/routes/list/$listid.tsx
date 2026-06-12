@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/src/components/PageHeader";
 import ListToolbar from "@/src/routes/list/ListToolbar";
 import ListItemElement from "@/src/routes/list/ListItemElement";
+import IconPicker from "@/src/icons/IconPicker";
 
 export const Route = createFileRoute("/list/$listid")({
   component: RouteComponent,
@@ -41,11 +42,26 @@ function RouteComponent() {
     isEditing,
     toggleEditing,
     handleDeleteItem,
+    deleteList,
+    batchReset,
   } = useListUtils({
     listid,
   });
 
-  if (!currentList) return;
+  if (!currentList)
+    return (
+      <>
+        <PageHeader title={"Valigiatore"} />
+
+        <div className={"flex flex-col gap-2 items-center"}>
+          <h3>Questa pagina non esiste.</h3>
+
+          <Link to={"/"}>
+            <Button>Torna alla home</Button>
+          </Link>
+        </div>
+      </>
+    );
 
   return (
     <>
@@ -61,6 +77,8 @@ function RouteComponent() {
         }
       />
 
+      <IconPicker />
+
       <div className={"flex flex-col gap-2 items-center w-96 max-w-dvw justify-center px-4 mx-auto"}>
         <ListToolbar
           isEditing={isEditing}
@@ -69,6 +87,8 @@ function RouteComponent() {
           sorting={sorting}
           handleGroupCompletedChange={handleGroupCompletedChange}
           groupCompleted={groupCompleted}
+          deleteList={deleteList}
+          batchReset={batchReset}
         />
 
         {!isEditing && <Combobox options={itemOptions as Item[]} createOption={(name) => ({ id: uuid(), name, tags: [] })} onAdd={handleAdd} />}
@@ -99,11 +119,13 @@ function RouteComponent() {
             </Accordion>
           </>
         ) : (
-          <div className={"flex flex-col gap-4 bg-main p-4 pt-2 pb-2"}>
-            {fullList.map((li) => (
-              <ListItemElement key={li.itemId} listItem={li} isEditing={isEditing} handleCheck={handleCheck} handleDeleteItem={handleDeleteItem} />
-            ))}
-          </div>
+          !!fullList.length && (
+            <div className={"flex flex-col gap-4 bg-main p-4 pt-2 pb-2"}>
+              {fullList.map((li) => (
+                <ListItemElement key={li.itemId} listItem={li} isEditing={isEditing} handleCheck={handleCheck} handleDeleteItem={handleDeleteItem} />
+              ))}
+            </div>
+          )
         )}
       </div>
     </>

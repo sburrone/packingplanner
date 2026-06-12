@@ -11,6 +11,7 @@ const listsSchema: z.ZodType<List> = z.object({
   id: z.string(),
   name: z.string(),
   items: z.array(listItemSchema),
+  favorite: z.boolean().default(false),
 }) satisfies z.ZodType<List>;
 
 export const listCollection = createCollection(

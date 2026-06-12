@@ -3,6 +3,7 @@ export interface List {
   name: string;
   icon?: string;
   items: ListItem[];
+  favorite?: boolean;
 }
 
 export interface ListItem {

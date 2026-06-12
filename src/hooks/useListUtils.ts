@@ -3,11 +3,14 @@ import { Item, List, Sorting } from "@/src/types";
 import { itemCollection, listCollection } from "@/src/db";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import _ from "lodash";
+import { useNavigate } from "@tanstack/react-router";
 
 export const useListUtils = ({ listid }: { listid: string }) => {
   const [sorting, setSorting] = useState<Sorting>((localStorage.getItem("packingplanner-settings-sorting") as Sorting) ?? Sorting.ADDED_ASC);
   const [groupCompleted, setGroupCompleted] = useState<boolean>(localStorage.getItem("packingplanner-settings-groupcompleted") !== "false");
   const [isEditing, setIsEditing] = useState(false);
+
+  const navigate = useNavigate();
 
   const { data: currentList } = useLiveQuery((q) =>
     q
@@ -91,8 +94,9 @@ export const useListUtils = ({ listid }: { listid: string }) => {
     });
   };
 
-  const deleteList = () => {
+  const deleteList = async () => {
     listCollection.delete(listid);
+    await navigate({ to: "/" });
   };
 
   return {
