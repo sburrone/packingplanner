@@ -5,7 +5,7 @@ import { Item, ListItem } from "@/src/types";
 import Combobox from "@/src/components/Combobox";
 import { v6 as uuid } from "uuid";
 import { Button } from "@/components/ui/button";
-import { Check, Home, Pencil, RotateCcw, Save, Trash } from "lucide-react";
+import { Check, Home, Pencil, RotateCcw, Trash } from "lucide-react";
 import SortingSelector from "@/src/components/SortingSelector";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Slide } from "@mui/material";
