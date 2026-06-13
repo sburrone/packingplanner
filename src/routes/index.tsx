@@ -5,9 +5,11 @@ import { listCollection } from "@/src/db";
 import _ from "lodash";
 import { PageHeader } from "@/src/components/PageHeader";
 import CreateListButton from "@/src/routes/-CreateListButton";
-import { Check } from "lucide-react";
+import { Check, Star } from "lucide-react";
 import { useIconResolver } from "@/src/icons/iconResolver";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { ButtonGroup, ButtonGroupSeparator } from "@/components/ui/button-group";
+import { List } from "@/src/types";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -16,6 +18,13 @@ export const Route = createFileRoute("/")({
 function RouteComponent() {
   const { data: lists } = useLiveQuery((q) => q.from({ pref: listCollection }));
   const getIcon = useIconResolver();
+
+  const toggleFavorite = (id: string) => {
+    listCollection.update(id, (l) => {
+      const list = l as unknown as List;
+      list.favorite = !list.favorite;
+    });
+  };
 
   return (
     <>
@@ -27,21 +36,24 @@ function RouteComponent() {
           <CreateListButton />
         </div>
 
-        {_.sortBy(lists, ["name", "id"]).map((list) => {
+        {_.sortBy(lists, [(el) => -Number(el.favorite), "name", "id"]).map((list) => {
           const [, Icon] = getIcon(list.icon);
           return (
-            <Link key={list.id} to={`/list/${list.id}`}>
-              <Button className="w-full flex flex-row justify-between">
-                <span className="flex flex-row gap-2 items-center">
-                  {!!Icon && <Icon className="-ml-2 h-10! w-8! pr-2 border-r-2" />}
-                  {list.name}
-                </span>
-                <span className="flex flex-row gap-2 items-center">
-                  <Check />
-                  {list.items.filter((i) => i.completed).length}/{list.items.length}
-                </span>
+            <ButtonGroup key={list.id} className="w-full">
+              <Button onClick={() => toggleFavorite(list.id)} className={`p-0 w-10 justify-center flex flex-row ${list.favorite && "bg-amber-400"}`}>
+                {!!Icon ? <Icon className="h-6! w-6!" /> : <Star className={"h-6! w-6!"} />}
               </Button>
-            </Link>
+              <ButtonGroupSeparator />
+              <Link to={`/list/${list.id}`} className={"w-full"}>
+                <Button className="flex w-full flex-row gap-2 justify-between">
+                  <span className="flex flex-row gap-2 items-center">{list.name}</span>
+                  <span className="flex flex-row gap-2 items-center">
+                    <Check />
+                    {list.items.filter((i) => i.completed).length}/{list.items.length}
+                  </span>
+                </Button>
+              </Link>
+            </ButtonGroup>
           );
         })}
       </div>
