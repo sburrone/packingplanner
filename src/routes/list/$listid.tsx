@@ -71,8 +71,6 @@ function RouteComponent() {
         }
       />
 
-      <IconPicker />
-
       <div className={"flex flex-col gap-2 items-center w-96 max-w-dvw justify-center px-4 mx-auto"}>
         <ListToolbar
           isEditing={isEditing}

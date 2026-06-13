@@ -12,6 +12,7 @@ const listsSchema: z.ZodType<List> = z.object({
   name: z.string(),
   items: z.array(listItemSchema),
   favorite: z.boolean().default(false),
+  icon: z.string().optional(),
 }) satisfies z.ZodType<List>;
 
 export const listCollection = createCollection(
