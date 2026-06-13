@@ -4,7 +4,7 @@ import { useLiveQuery } from "@tanstack/react-db";
 import { listCollection } from "@/src/db";
 import _ from "lodash";
 import { PageHeader } from "@/src/components/PageHeader";
-import CreateListButton from "@/src/routes/CreateListButton";
+import CreateListButton from "@/src/routes/-CreateListButton";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,

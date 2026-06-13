@@ -1,21 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { itemCollection } from "@/src/db";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Item, ListItem } from "@/src/types";
+import { Item } from "@/src/types";
 import Combobox from "@/src/components/Combobox";
 import { v6 as uuid } from "uuid";
 import { Button } from "@/components/ui/button";
-import { Check, Home, Pencil, RotateCcw, Trash } from "lucide-react";
-import SortingSelector from "@/src/components/SortingSelector";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Slide } from "@mui/material";
-import { Label } from "@/components/ui/label";
 import { useListUtils } from "@/src/hooks/useListUtils";
-import { ButtonGroup, ButtonGroupSeparator } from "@/components/ui/button-group";
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/src/components/PageHeader";
-import ListToolbar from "@/src/routes/list/ListToolbar";
-import ListItemElement from "@/src/routes/list/ListItemElement";
+import ListToolbar from "@/src/routes/list/-ListToolbar";
+import ListItemElement from "@/src/routes/list/-ListItemElement";
 import IconPicker from "@/src/icons/IconPicker";
 
 export const Route = createFileRoute("/list/$listid")({

@@ -8,7 +8,7 @@ import { v6 as uuid } from "uuid";
 import { useLiveQuery } from "@tanstack/react-db";
 import { Input } from "@/components/ui/input";
 
-const CreateListButton: FC = (props) => {
+const CreateListButton: FC = () => {
   const [open, setOpen] = useState(false);
   const { data: lists } = useLiveQuery((q) => q.from({ pref: listCollection }));
 
