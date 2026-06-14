@@ -4,7 +4,6 @@ import { itemCollection, listCollection } from "@/src/db";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import _ from "lodash";
 import { useNavigate } from "@tanstack/react-router";
-import listItemElement from "@/src/routes/list/-ListItemElement";
 
 export const useListUtils = ({ listid }: { listid: string }) => {
   const [sorting, setSorting] = useState<Sorting>((localStorage.getItem("packingplanner-settings-sorting") as Sorting) ?? Sorting.ADDED_ASC);

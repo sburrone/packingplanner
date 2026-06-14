@@ -1,7 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Item } from "@/src/types";
-import Combobox from "@/src/components/Combobox";
-import { v6 as uuid } from "uuid";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Slide } from "@mui/material";
