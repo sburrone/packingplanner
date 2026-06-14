@@ -1,9 +1,10 @@
-import { ChangeEventHandler, useState } from "react";
-import { Item, List, Sorting } from "@/src/types";
+import { ChangeEventHandler, useMemo, useState } from "react";
+import { Item, List, ListItem, Sorting } from "@/src/types";
 import { itemCollection, listCollection } from "@/src/db";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import _ from "lodash";
 import { useNavigate } from "@tanstack/react-router";
+import listItemElement from "@/src/routes/list/-ListItemElement";
 
 export const useListUtils = ({ listid }: { listid: string }) => {
   const [sorting, setSorting] = useState<Sorting>((localStorage.getItem("packingplanner-settings-sorting") as Sorting) ?? Sorting.ADDED_ASC);
@@ -57,9 +58,51 @@ export const useListUtils = ({ listid }: { listid: string }) => {
     localStorage.setItem("packingplanner-settings-groupcompleted", String(groupCompleted));
   };
 
-  const fullList = currentList?.items ?? [];
-  const itemsCompleted = currentList?.items.filter((item) => item.completed) ?? [];
-  const itemsToComplete = currentList?.items.filter((item) => !item.completed) ?? [];
+  const fullList = useMemo(() => {
+    const [iteratees, orders]: [(string | ((li: ListItem) => void))[], ("asc" | "desc")[]] = (() => {
+      switch (sorting) {
+        default:
+        case Sorting.ADDED_ASC:
+          return [[(li: ListItem) => currentList?.items.findIndex((el) => li.itemId === el.itemId)], ["asc"]] as const;
+        case Sorting.ADDED_DESC:
+          return [[(li: ListItem) => currentList?.items.findIndex((el) => li.itemId === el.itemId)], ["desc"]] as const;
+        case Sorting.ALPHA_ASC:
+          return [[(li: ListItem) => itemCollection.get(li.itemId)?.name ?? "", (li: ListItem) => currentList?.items.findIndex((el) => li.itemId === el.itemId)], ["asc"]];
+        case Sorting.ALPHA_DESC:
+          return [[(li: ListItem) => itemCollection.get(li.itemId)?.name ?? "", (li: ListItem) => currentList?.items.findIndex((el) => li.itemId === el.itemId)], ["desc"]];
+        case Sorting.TAGS_ASC:
+          return [
+            [
+              (li: ListItem) => {
+                const item = itemCollection.get(li.itemId);
+                const sortedTags = _.sortBy(item?.tags ?? [], "name");
+                return sortedTags[0];
+              },
+              (li: ListItem) => itemCollection.get(li.itemId)?.name,
+              (li: ListItem) => currentList?.items.findIndex((el) => li.itemId === el.itemId),
+            ],
+            ["asc"],
+          ];
+        case Sorting.TAGS_DESC:
+          return [
+            [
+              (li: ListItem) => {
+                const item = itemCollection.get(li.itemId);
+                const sortedTags = _.sortBy(item?.tags ?? [], "name");
+                return sortedTags[0];
+              },
+              (li: ListItem) => itemCollection.get(li.itemId)?.name,
+              (li: ListItem) => currentList?.items.findIndex((el) => li.itemId === el.itemId),
+            ],
+            ["desc"],
+          ];
+      }
+    })();
+
+    return _.orderBy(currentList?.items ?? [], iteratees, orders);
+  }, [currentList?.items, sorting]);
+  const itemsCompleted = fullList.filter((item) => item.completed) ?? [];
+  const itemsToComplete = fullList.filter((item) => !item.completed) ?? [];
 
   const [listNameInput, setListNameInput] = useState<string>(currentList?.name ?? "");
   const handleListNameInputChange: ChangeEventHandler<HTMLInputElement, HTMLInputElement> = (e) => {

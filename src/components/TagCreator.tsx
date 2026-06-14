@@ -6,9 +6,8 @@ import { Input } from "@/components/ui/input";
 import IconPicker from "@/src/icons/IconPicker";
 import { tagCollection } from "@/src/db";
 import { v7 as uuid } from "uuid";
-import { Card, CardTitle, CardHeader, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { useIconResolver } from "@/src/icons/iconResolver";
-import { setIn } from "formik";
 
 const TagCreator: FC = () => {
   const [showCreation, setShowCreation] = useState<boolean>(false);

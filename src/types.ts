@@ -29,4 +29,6 @@ export enum Sorting {
   ADDED_DESC = "ADDED_DESC",
   ALPHA_ASC = "ALPHA_ASC",
   ALPHA_DESC = "ALPHA_DESC",
+  TAGS_ASC = "TAGS_ASC",
+  TAGS_DESC = "TAGS_DESC",
 }

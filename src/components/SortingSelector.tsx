@@ -1,7 +1,7 @@
 import { Sorting } from "@/src/types";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuGroup, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { ArrowDown, ArrowDownAZ, ArrowDownZA, ArrowUp, Clock, Clock8 } from "lucide-react";
+import { ArrowDown, ArrowDownAZ, ArrowDownZA, ArrowUp, Clock, Clock8, Tag } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
@@ -46,6 +46,20 @@ const SortingSelector: React.FC<SortingProps> = (props) => {
             <ArrowDown />
           </>
         );
+      case Sorting.TAGS_ASC:
+        return (
+          <>
+            <Tag />
+            <ArrowUp />
+          </>
+        );
+      case Sorting.TAGS_DESC:
+        return (
+          <>
+            <Tag />
+            <ArrowDown />
+          </>
+        );
     }
   };
 
@@ -74,6 +88,18 @@ const SortingSelector: React.FC<SortingProps> = (props) => {
         return (
           <>
             <ArrowDownZA /> Alfabetico <ArrowDown />
+          </>
+        );
+      case Sorting.TAGS_ASC:
+        return (
+          <>
+            <Tag /> Tag <ArrowUp />
+          </>
+        );
+      case Sorting.TAGS_DESC:
+        return (
+          <>
+            <Tag /> Tag <ArrowDown />
           </>
         );
     }

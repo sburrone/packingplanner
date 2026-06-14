@@ -41,7 +41,7 @@ const ListItemElement: FC<ListItemElementProps> = (props) => {
       </div>
     );
   return (
-    <div key={item.id} className={"flex flex-row gap-3 items-center w-80 min-h-5 h-fit"}>
+    <div key={item.id} className={"flex flex-row gap-3 items-center w-80 min-h-7 h-fit"}>
       <Checkbox
         className="transition-transform duration-200 ease-out data-[state=checked]:scale-110 data-[state=unchecked]:scale-100"
         id={item.id}
@@ -57,13 +57,13 @@ const ListItemElement: FC<ListItemElementProps> = (props) => {
           {item.name}
         </span>
         {!!item.tags.length && (
-          <span className={"flex flex-row gap-2"}>
+          <span className={"flex flex-row gap-2 bg-chart-5 p-1 -m-1 border-2 border-black rounded-2xl"}>
             {item.tags.map((tag) => {
               const [, Icon] = getIcon(tag.icon);
               return (
-                <TooltipProvider>
+                <TooltipProvider key={tag.id}>
                   <Tooltip>
-                    <TooltipTrigger asChild>{!!Icon ? <Icon /> : tag.name.slice(0, 1).toLocaleUpperCase()}</TooltipTrigger>
+                    <TooltipTrigger asChild>{!!Icon ? <Icon className={"text-black"} /> : tag.name.slice(0, 1).toLocaleUpperCase()}</TooltipTrigger>
                     <TooltipContent side={"bottom"} className={"bg-chart-5"}>
                       {tag.name}
                     </TooltipContent>

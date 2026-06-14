@@ -118,7 +118,7 @@ const ObjectCreator: FC<ObjectCreatorProps> = (props) => {
                     return (
                       <Button
                         key={item.id}
-                        className={`w-fit h-6 flex max-w-full overflow-hidden text-center text-nowrap ${inputValue === item.name && "bg-chart-5"}`}
+                        className={`w-fit h-6 flex max-w-full overflow-hidden text-center text-nowrap ${inputValue === item.name && item.tags.every((t) => selectedTags.find((st) => st.id === t.id)) && "bg-chart-5"}`}
                         onClick={() => handleNameSuggested(item)}
                       >
                         {item.tags.map((itemTag) => {

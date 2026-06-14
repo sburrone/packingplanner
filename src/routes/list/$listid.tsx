@@ -10,7 +10,6 @@ import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/src/components/PageHeader";
 import ListToolbar from "@/src/routes/list/-ListToolbar";
 import ListItemElement from "@/src/routes/list/-ListItemElement";
-import IconPicker from "@/src/icons/IconPicker";
 import ObjectCreator from "@/src/components/ObjectCreator";
 
 export const Route = createFileRoute("/list/$listid")({
@@ -84,7 +83,6 @@ function RouteComponent() {
           batchReset={batchReset}
         />
 
-        {!isEditing && <Combobox options={itemOptions as Item[]} createOption={(name) => ({ id: uuid(), name, tags: [] })} onAdd={handleAdd} />}
         {!isEditing && <ObjectCreator onAdd={handleAdd} />}
 
         {groupCompleted ? (
