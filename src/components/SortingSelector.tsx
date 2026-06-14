@@ -108,7 +108,7 @@ const SortingSelector: React.FC<SortingProps> = (props) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button>Ordina {getButton()}</Button>
+        <Button>{getButton()}</Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className={"w-56"}>
         <DropdownMenuLabel className={"flex flex-row gap-3 items-center"}>

@@ -4,7 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Home, Check, Pencil, RotateCcw, Trash } from "lucide-react";
 import SortingSelector from "@/src/components/SortingSelector";
-import { Sorting } from "@/src/types";
+import { ItemTag, ListItem, Sorting } from "@/src/types";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,6 +16,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import FilterTagSelector from "@/src/components/FilterTagSelector";
 
 interface ListToolbarProps {
   isEditing: boolean;
@@ -26,10 +27,13 @@ interface ListToolbarProps {
   groupCompleted: boolean;
   batchReset: (val?: boolean) => void;
   deleteList: () => void;
+  itemTagsInList: ItemTag[];
+  selectedTagIds: string[];
+  onSelectedTagIdsChange: (ids: string[]) => void;
 }
 
 const ListToolbar: FC<ListToolbarProps> = (props) => {
-  const { isEditing, toggleEditing, handleGroupCompletedChange, handleSortingChange, sorting, groupCompleted, batchReset, deleteList } = props;
+  const { itemTagsInList, selectedTagIds, onSelectedTagIdsChange, isEditing, toggleEditing, handleGroupCompletedChange, handleSortingChange, sorting, groupCompleted, batchReset, deleteList } = props;
 
   return (
     <div className={"flex flex-row justify-between w-full mb-4"}>
@@ -97,7 +101,11 @@ const ListToolbar: FC<ListToolbarProps> = (props) => {
         )}
       </ButtonGroup>
 
-      <SortingSelector sorting={sorting} setSorting={handleSortingChange} groupCompleted={groupCompleted} setGroupCompleted={handleGroupCompletedChange} />
+      <ButtonGroup>
+        <FilterTagSelector selectedTagIds={selectedTagIds} onSelectedTagIdsChange={onSelectedTagIdsChange} itemTagsInList={itemTagsInList} />
+        <ButtonGroupSeparator />
+        <SortingSelector sorting={sorting} setSorting={handleSortingChange} groupCompleted={groupCompleted} setGroupCompleted={handleGroupCompletedChange} />
+      </ButtonGroup>
     </div>
   );
 };

@@ -27,8 +27,8 @@ const ListItemElement: FC<ListItemElementProps> = (props) => {
 
   if (isEditing)
     return (
-      <div key={item.id} className={"flex flex-row gap-3 items-center w-80 h-5"}>
-        <span className={"text-left text-main-foreground flex-1"}>{item.name}</span>
+      <div key={item.id} className={"flex flex-row gap-3 items-center w-80 min-h-7 h-fit"}>
+        <span className={"text-left text-main-foreground flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap"}>{item.name}</span>
         <ButtonGroup>
           <Button className={"bg-chart-5 h-7 w-7"} variant="noShadow" disabled>
             <Pencil />

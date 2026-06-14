@@ -23,7 +23,6 @@ function RouteComponent() {
     groupCompleted,
     handleCheck,
     handleAdd,
-    itemOptions,
     currentList,
     fullList,
     itemsCompleted,
@@ -35,6 +34,10 @@ function RouteComponent() {
     handleDeleteItem,
     deleteList,
     batchReset,
+    selectedTagIds,
+    setSelectedTagIds,
+    itemTagsInList,
+    fullListFilteredByTags,
   } = useListUtils({
     listid,
   });
@@ -78,6 +81,9 @@ function RouteComponent() {
           groupCompleted={groupCompleted}
           deleteList={deleteList}
           batchReset={batchReset}
+          selectedTagIds={selectedTagIds}
+          onSelectedTagIdsChange={setSelectedTagIds}
+          itemTagsInList={itemTagsInList}
         />
 
         {!isEditing && <ObjectCreator onAdd={handleAdd} />}
@@ -108,9 +114,9 @@ function RouteComponent() {
             </Accordion>
           </>
         ) : (
-          !!fullList.length && (
+          !!fullListFilteredByTags.length && (
             <div className={"flex flex-col gap-4 bg-main p-4 pt-2 pb-2"}>
-              {fullList.map((li) => (
+              {fullListFilteredByTags.map((li) => (
                 <ListItemElement key={li.itemId} listItem={li} isEditing={isEditing} handleCheck={handleCheck} handleDeleteItem={handleDeleteItem} />
               ))}
             </div>

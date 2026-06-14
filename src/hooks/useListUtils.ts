@@ -57,6 +57,8 @@ export const useListUtils = ({ listid }: { listid: string }) => {
     localStorage.setItem("packingplanner-settings-groupcompleted", String(groupCompleted));
   };
 
+  const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
+
   const fullList = useMemo(() => {
     const [iteratees, orders]: [(string | ((li: ListItem) => void))[], ("asc" | "desc")[]] = (() => {
       switch (sorting) {
@@ -100,8 +102,21 @@ export const useListUtils = ({ listid }: { listid: string }) => {
 
     return _.orderBy(currentList?.items ?? [], iteratees, orders);
   }, [currentList?.items, sorting]);
-  const itemsCompleted = fullList.filter((item) => item.completed) ?? [];
-  const itemsToComplete = fullList.filter((item) => !item.completed) ?? [];
+
+  const { data: allItems } = useLiveQuery((q) => q.from({ pref: itemCollection }));
+  const itemsInList = allItems.filter((item) => fullList.find((li) => li.itemId === item.id));
+  const itemTagsInList = _.uniqBy(
+    itemsInList.flatMap((item) => item.tags),
+    (tag) => tag.id,
+  );
+
+  const fullListFilteredByTags = useMemo(() => {
+    const itemsInListFilteredByTags = itemsInList.filter((item) => !selectedTagIds.length || item.tags.find((tag) => selectedTagIds.includes(tag.id)));
+    return fullList.filter((li) => itemsInListFilteredByTags.find((i) => li.itemId === i.id));
+  }, [fullList, itemTagsInList]);
+
+  const itemsCompleted = fullListFilteredByTags.filter((item) => item.completed) ?? [];
+  const itemsToComplete = fullListFilteredByTags.filter((item) => !item.completed) ?? [];
 
   const [listNameInput, setListNameInput] = useState<string>(currentList?.name ?? "");
   const handleListNameInputChange: ChangeEventHandler<HTMLInputElement, HTMLInputElement> = (e) => {
@@ -160,5 +175,9 @@ export const useListUtils = ({ listid }: { listid: string }) => {
     handleDeleteItem,
     batchReset,
     deleteList,
+    itemTagsInList,
+    selectedTagIds,
+    setSelectedTagIds,
+    fullListFilteredByTags,
   };
 };
