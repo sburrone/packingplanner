@@ -2,9 +2,9 @@ import { ButtonGroup, ButtonGroupSeparator } from "@/components/ui/button-group"
 import { FC } from "react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { Home, Check, Pencil, RotateCcw, Trash } from "lucide-react";
+import { Check, Home, Pencil, RotateCcw, Trash } from "lucide-react";
 import SortingSelector from "@/src/components/SortingSelector";
-import { ItemTag, ListItem, Sorting } from "@/src/types";
+import { ItemTag, Sorting } from "@/src/types";
 import {
   AlertDialog,
   AlertDialogAction,

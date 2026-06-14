@@ -24,7 +24,6 @@ function RouteComponent() {
     handleCheck,
     handleAdd,
     currentList,
-    fullList,
     itemsCompleted,
     itemsToComplete,
     listNameInput,
