@@ -19,14 +19,14 @@ const FilterTagSelector: FC<FilterTagSelectorProps> = (props: FilterTagSelectorP
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className={selectedTagIds.length ? "bg-chart-5" : ""}>
+        <Button className={selectedTagIds.length ? "bg-chart-3" : ""}>
           <Funnel />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className={`w-56 ${selectedTagIds.length && "bg-chart-5"}`}>
+      <DropdownMenuContent className={`w-56`}>
         <DropdownMenuLabel className={"flex flex-row justify-between items-center"}>
           <span>Filtra per tag</span>
-          <Button className={`w-6 h-6 min-w-0 ${selectedTagIds.length && "bg-chart-5"}`} disabled={!selectedTagIds.length} onClick={() => onSelectedTagIdsChange([])}>
+          <Button className={`w-6 h-6 min-w-0`} disabled={!selectedTagIds.length} onClick={() => onSelectedTagIdsChange([])}>
             <FunnelX />
           </Button>
         </DropdownMenuLabel>

@@ -95,7 +95,15 @@ function RouteComponent() {
                   <AccordionTrigger className={"h-10"}>Da completare ({itemsToComplete.length})</AccordionTrigger>
                   <AccordionContent className={"flex flex-col gap-4 bg-main p-4 pt-2 pb-2"}>
                     {itemsToComplete.map((li) => (
-                      <ListItemElement key={li.itemId} listItem={li} isEditing={isEditing} handleCheck={handleCheck} handleDeleteItem={handleDeleteItem} />
+                      <ListItemElement
+                        key={li.itemId}
+                        listItem={li}
+                        isEditing={isEditing}
+                        handleCheck={handleCheck}
+                        handleDeleteItem={handleDeleteItem}
+                        selectedTagIds={selectedTagIds}
+                        onSelectedTagIdsChange={setSelectedTagIds}
+                      />
                     ))}
                   </AccordionContent>
                 </AccordionItem>
@@ -105,7 +113,15 @@ function RouteComponent() {
                   <AccordionTrigger className={"h-10"}>Completati ({itemsCompleted.length})</AccordionTrigger>
                   <AccordionContent className={"flex flex-col gap-4 bg-main p-4 pt-2 pb-2"}>
                     {itemsCompleted.map((li) => (
-                      <ListItemElement key={li.itemId} listItem={li} isEditing={isEditing} handleCheck={handleCheck} handleDeleteItem={handleDeleteItem} />
+                      <ListItemElement
+                        key={li.itemId}
+                        listItem={li}
+                        isEditing={isEditing}
+                        handleCheck={handleCheck}
+                        handleDeleteItem={handleDeleteItem}
+                        selectedTagIds={selectedTagIds}
+                        onSelectedTagIdsChange={setSelectedTagIds}
+                      />
                     ))}
                   </AccordionContent>
                 </AccordionItem>
@@ -116,7 +132,15 @@ function RouteComponent() {
           !!fullListFilteredByTags.length && (
             <div className={"flex flex-col gap-4 bg-main p-4 pt-2 pb-2"}>
               {fullListFilteredByTags.map((li) => (
-                <ListItemElement key={li.itemId} listItem={li} isEditing={isEditing} handleCheck={handleCheck} handleDeleteItem={handleDeleteItem} />
+                <ListItemElement
+                  key={li.itemId}
+                  listItem={li}
+                  isEditing={isEditing}
+                  handleCheck={handleCheck}
+                  handleDeleteItem={handleDeleteItem}
+                  selectedTagIds={selectedTagIds}
+                  onSelectedTagIdsChange={setSelectedTagIds}
+                />
               ))}
             </div>
           )

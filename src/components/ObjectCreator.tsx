@@ -4,7 +4,7 @@ import { useLiveQuery } from "@tanstack/react-db";
 import { itemCollection, listCollection, tagCollection } from "@/src/db";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { X, Plus } from "lucide-react";
+import { X, Plus, Pencil } from "lucide-react";
 import { Card, CardContent, CardTitle, CardHeader } from "@/components/ui/card";
 import { Collapse } from "@mui/material";
 import { useIconResolver } from "@/src/icons/iconResolver";
@@ -15,10 +15,13 @@ import { v7 as uuid } from "uuid";
 
 interface ObjectCreatorProps {
   onAdd: (item: Item) => void;
+  mode?: "add" | "edit";
+  defaultInputValue?: string;
+  defaultTags?: ItemTag[];
 }
 
 const ObjectCreator: FC<ObjectCreatorProps> = (props) => {
-  const { onAdd } = props;
+  const { onAdd, mode, defaultInputValue, defaultTags } = props;
 
   const { data: lists } = useLiveQuery((q) => q.from({ pref: listCollection }));
   const itemHits = useMemo(
@@ -35,8 +38,8 @@ const ObjectCreator: FC<ObjectCreatorProps> = (props) => {
   const { data: itemOptions } = useLiveQuery((q) => q.from({ pref: itemCollection }));
   const { data: tagOptions } = useLiveQuery((q) => q.from({ pref: tagCollection }));
 
-  const [selectedTags, setSelectedTags] = useState<ItemTag[]>([]);
-  const [inputValue, setInputValue] = useState<string>("");
+  const [selectedTags, setSelectedTags] = useState<ItemTag[]>(defaultTags ?? []);
+  const [inputValue, setInputValue] = useState<string>(defaultInputValue ?? "");
   const [showPanel, setShowPanel] = useState<boolean>(false);
 
   const sortItemSuggestions = (suggestions: Item[]) => {
@@ -85,7 +88,14 @@ const ObjectCreator: FC<ObjectCreatorProps> = (props) => {
   return (
     <>
       <div className="flex w-full justify-center items-center space-x-2">
-        <Input className={"w-72"} value={inputValue} onChange={handleInputChange} aria-label={"Aggiungi oggetto"} placeholder="Aggiungi oggetto..." onFocus={() => setShowPanel(true)} />
+        <Input
+          className={"w-72"}
+          value={inputValue}
+          onChange={handleInputChange}
+          aria-label={mode === "edit" ? "Modifica oggetto" : "Aggiungi oggetto"}
+          placeholder={mode === "edit" ? "Modifica oggetto" : "Aggiungi oggetto..."}
+          onFocus={() => setShowPanel(true)}
+        />
         <ButtonGroup>
           {!!inputValue.length && (
             <>
@@ -96,19 +106,29 @@ const ObjectCreator: FC<ObjectCreatorProps> = (props) => {
             </>
           )}
           <Button className={`bg-chart-4 ${inputValue.length ? "w-10" : "w-20"}`} disabled={!inputValue.length} onClick={handleAdd}>
-            <Plus /> {!inputValue && "Agg."}
+            {mode === "edit" ? (
+              <>
+                <Pencil /> {!inputValue && "Salva"}
+              </>
+            ) : (
+              <>
+                <Plus /> {!inputValue && "Agg."}
+              </>
+            )}
           </Button>
         </ButtonGroup>
       </div>
 
-      <Collapse in={showPanel} className={"w-full"}>
+      <Collapse in={showPanel || mode === "edit"} className={"w-96 px-2"}>
         <Card className="w-full bg-secondary">
-          <CardHeader className={"flex flex-row items-center justify-between"}>
-            <CardTitle>Aggiungi oggetto</CardTitle>
-            <Button variant="noShadow" className="w-6 h-6 px-0" onClick={() => setShowPanel(false)}>
-              <X />
-            </Button>
-          </CardHeader>
+          {mode !== "edit" && (
+            <CardHeader className={"flex flex-row items-center justify-between"}>
+              <CardTitle>Aggiungi oggetto</CardTitle>
+              <Button variant="noShadow" className="w-6 h-6 px-0" onClick={() => setShowPanel(false)}>
+                <X />
+              </Button>
+            </CardHeader>
+          )}
           <CardContent className={"flex flex-col gap-4"}>
             {!!itemSuggestions.length && (
               <div>
