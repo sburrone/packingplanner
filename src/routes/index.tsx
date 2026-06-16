@@ -7,7 +7,6 @@ import { PageHeader } from "@/src/components/PageHeader";
 import CreateListButton from "@/src/routes/-CreateListButton";
 import { Check, Star } from "lucide-react";
 import { useIconResolver } from "@/src/icons/iconResolver";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ButtonGroup, ButtonGroupSeparator } from "@/components/ui/button-group";
 import { List } from "@/src/types";
 
