@@ -9,7 +9,8 @@ import { FC, useState } from "react";
 import { useIconResolver } from "@/src/icons/iconResolver";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import ObjectCreator from "@/src/components/ObjectCreator";
-import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ColorModel } from "@martinlaxenaire/color-palette-generator";
 
 interface ListItemElementProps {
   listItem: ListItem;
@@ -18,10 +19,11 @@ interface ListItemElementProps {
   handleDeleteItem: (itemId: string) => void;
   selectedTagIds: string[];
   onSelectedTagIdsChange: (ids: string[]) => void;
+  colorPalette: Record<string, ColorModel>;
 }
 
 const ListItemElement: FC<ListItemElementProps> = (props) => {
-  const { listItem, isEditing, handleCheck, handleDeleteItem, selectedTagIds, onSelectedTagIdsChange } = props;
+  const { listItem, isEditing, handleCheck, handleDeleteItem, selectedTagIds, onSelectedTagIdsChange, colorPalette } = props;
 
   const [showPanel, setShowPanel] = useState<boolean>(false);
 
@@ -86,16 +88,28 @@ const ListItemElement: FC<ListItemElementProps> = (props) => {
             {item.tags.map((tag, index) => {
               const [, Icon] = getIcon(tag.icon);
               const isSelected = selectedTagIds.includes(tag.id);
+              const color = colorPalette[tag.id];
+              const style =
+                isSelected || !selectedTagIds.length
+                  ? {
+                      backgroundColor: color.hex,
+                      color: `contrast-color(${color.hex})`,
+                    }
+                  : {
+                      backgroundColor: "gray",
+                      color: `contrast-color(gray)`,
+                    };
+              console.log("AAA", colorPalette, tag.id, color);
               return (
                 <>
                   <TooltipProvider key={tag.id}>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <Button variant={"reverse"} className={`bg-chart-${isSelected ? 3 : 5} h-7 w-7`} onClick={() => onTagSelect(tag.id)}>
+                        <Button variant={"reverse"} className={`h-7 w-7`} style={style} onClick={() => onTagSelect(tag.id)}>
                           {!!Icon ? <Icon /> : tag.name.slice(0, 1).toLocaleUpperCase()}
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent side={"bottom"} className={"bg-chart-5"}>
+                      <TooltipContent side={"bottom"} style={style}>
                         {tag.name}
                       </TooltipContent>
                     </Tooltip>

@@ -37,6 +37,7 @@ function RouteComponent() {
     setSelectedTagIds,
     itemTagsInList,
     fullListFilteredByTags,
+    colorPalette,
   } = useListUtils({
     listid,
   });
@@ -103,6 +104,7 @@ function RouteComponent() {
                         handleDeleteItem={handleDeleteItem}
                         selectedTagIds={selectedTagIds}
                         onSelectedTagIdsChange={setSelectedTagIds}
+                        colorPalette={colorPalette}
                       />
                     ))}
                   </AccordionContent>
@@ -121,6 +123,7 @@ function RouteComponent() {
                         handleDeleteItem={handleDeleteItem}
                         selectedTagIds={selectedTagIds}
                         onSelectedTagIdsChange={setSelectedTagIds}
+                        colorPalette={colorPalette}
                       />
                     ))}
                   </AccordionContent>
@@ -140,6 +143,7 @@ function RouteComponent() {
                   handleDeleteItem={handleDeleteItem}
                   selectedTagIds={selectedTagIds}
                   onSelectedTagIdsChange={setSelectedTagIds}
+                  colorPalette={colorPalette}
                 />
               ))}
             </div>

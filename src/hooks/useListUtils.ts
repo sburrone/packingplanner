@@ -4,6 +4,7 @@ import { itemCollection, listCollection } from "@/src/db";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import _ from "lodash";
 import { useNavigate } from "@tanstack/react-router";
+import { ColorModel, ColorPaletteGenerator } from "@martinlaxenaire/color-palette-generator";
 
 export const useListUtils = ({ listid }: { listid: string }) => {
   const [sorting, setSorting] = useState<Sorting>((localStorage.getItem("packingplanner-settings-sorting") as Sorting) ?? Sorting.ADDED_ASC);
@@ -103,6 +104,27 @@ export const useListUtils = ({ listid }: { listid: string }) => {
     return _.orderBy(currentList?.items ?? [], iteratees, orders);
   }, [currentList?.items, sorting]);
 
+  const colorPalette = useMemo(() => {
+    const generator = new ColorPaletteGenerator({
+      precision: 10,
+      baseColor: "red",
+      hueRange: 360,
+    });
+    const tags = _.uniqBy(
+      itemOptions.flatMap((item) => item.tags),
+      "id",
+    );
+    const palette = generator.getRandomPalette({ length: tags.length, includeBaseColor: false, minBrightness: 40, maxSaturation: 80 });
+
+    return tags.reduce(
+      (acc, cur, index) => {
+        acc[cur.id] = palette[index];
+        return acc;
+      },
+      {} as Record<string, ColorModel>,
+    );
+  }, [itemOptions]);
+
   const { data: allItems } = useLiveQuery((q) => q.from({ pref: itemCollection }));
   const itemsInList = allItems.filter((item) => fullList.find((li) => li.itemId === item.id));
   const itemTagsInList = _.uniqBy(
@@ -179,5 +201,6 @@ export const useListUtils = ({ listid }: { listid: string }) => {
     selectedTagIds,
     setSelectedTagIds,
     fullListFilteredByTags,
+    colorPalette,
   };
 };
