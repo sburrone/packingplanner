@@ -99,7 +99,7 @@ const ListItemElement: FC<ListItemElementProps> = (props) => {
                       backgroundColor: "gray",
                       color: `contrast-color(gray)`,
                     };
-              console.log("AAA", colorPalette, tag.id, color);
+
               return (
                 <>
                   <TooltipProvider key={tag.id}>

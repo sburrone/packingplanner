@@ -63,7 +63,7 @@ function RouteComponent() {
         title={
           isEditing ? (
             <div className={"flex flex-row w-96 mx-auto px-4"}>
-              <Input className={"text-xl font-sans bg-foreground text-main-foreground flex-1 w-full h-9"} aria-label={"Rinomina lista"} value={listNameInput} onChange={handleListNameInputChange} />
+              <Input className={"text-xl font-sans bg-white text-black flex-1 w-full h-9"} aria-label={"Rinomina lista"} value={listNameInput} onChange={handleListNameInputChange} />
             </div>
           ) : (
             currentList.name
