@@ -1,6 +1,6 @@
 import { ButtonGroup, ButtonGroupSeparator } from "@/components/ui/button-group";
 import { FC } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Check, Home, Pencil, RotateCcw, Trash } from "lucide-react";
 import SortingSelector from "@/src/components/SortingSelector";
