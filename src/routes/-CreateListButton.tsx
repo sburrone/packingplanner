@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { icons, Plus } from "lucide-react";
+import { Circle, Copy, icons, Plus, Star } from "lucide-react";
 import { FC, useState } from "react";
 import { Formik, FormikValues } from "formik";
 import { listCollection } from "@/src/db";
@@ -10,14 +10,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import IconPicker from "@/src/icons/IconPicker";
 import { useIconResolver } from "@/src/icons/iconResolver";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+interface FormValue {
+  name: string;
+  icon?: string;
+  importSetting: false | true | string;
+}
 
 const CreateListButton: FC = () => {
   const [open, setOpen] = useState(false);
   const { data: lists } = useLiveQuery((q) => q.from({ pref: listCollection }));
   const getIcon = useIconResolver();
 
-  const onCreateList: FormikValues["onsubmit"] = (values: { name: string; icon?: string }) => {
-    listCollection.insert({ id: uuid(), name: values.name, items: [], icon: values.icon });
+  const onCreateList: FormikValues["onsubmit"] = (values: FormValue) => {
+    const items = lists.find((l) => l.id === values.importSetting)?.items ?? [];
+    listCollection.insert({ id: uuid(), name: values.name, items, icon: values.icon });
     setOpen(false);
   };
 
@@ -31,10 +39,11 @@ const CreateListButton: FC = () => {
       <DialogContent className={"sm:max-w-100"}>
         <Formik
           onSubmit={onCreateList}
-          initialValues={{ name: `Lista numero ${lists.length + 1}`, icon: undefined }}
+          initialValues={{ name: `Lista numero ${lists.length + 1}`, icon: undefined, importSetting: false } as FormValue}
           validate={(values) => {
-            const err: { name?: string; icon?: string } = {};
+            const err: { name?: string; icon?: string; importSetting?: false | true | string } = {};
             if (!values.name) err.name = "Richiesto";
+            if (values.importSetting === true) err.importSetting = 'Specifica una lista da importare, o seleziona "Lasciala vuota".';
             if (values.icon && !Object.keys(icons).includes(values.icon)) err.icon = "Icona non valida";
             return err;
           }}
@@ -50,11 +59,12 @@ const CreateListButton: FC = () => {
                     <div className={"grid gap-3"}>
                       <Label htmlFor={"name"}>Nome</Label>
                       <Input id={"name"} name={"name"} onChange={handleChange} onBlur={handleBlur} value={values.name} aria-label={"nome"} />
-                      {errors.name && touched.name && errors.name}
+                      {errors.name && touched.name && <Label className={"text-chart-2"}>{errors.name}</Label>}
                     </div>
+
                     <div className={"grid gap-3"}>
                       <Label htmlFor={"icon"}>Icona</Label>
-                      <div className={"flex flex-row gap-2 justify-between items-center"}>
+                      <div className={"flex flex-row gap-4 items-center"}>
                         <IconPicker value={values.icon} onChange={(val) => setFieldValue("icon", val, true)} dialogTrigger={"Scegli icona..."} />
                         <span className={"flex flex-row gap-2 items-center"}>
                           {values.icon && foundKey && FoundIcon ? (
@@ -67,6 +77,63 @@ const CreateListButton: FC = () => {
                         </span>
                       </div>
                       {errors.icon && touched.icon && errors.icon}
+                    </div>
+
+                    <div className={"grid gap-3"}>
+                      <Label>Importa oggetti</Label>
+                      <div className={"flex flex-row gap-3"}>
+                        <Button
+                          className={`flex flex-col gap-2 flex-1 h-fit ${values.importSetting === false && "bg-chart-5"}`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setFieldValue("importSetting", false, true);
+                          }}
+                        >
+                          <Circle />
+                          Lasciala vuota
+                        </Button>
+                        <Button
+                          className={`flex flex-col gap-2 flex-1 h-fit ${values.importSetting !== false && "bg-chart-5"}`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            values.importSetting === false && setFieldValue("importSetting", true, true);
+                          }}
+                        >
+                          <Copy />
+                          Copia da altra lista
+                        </Button>
+                      </div>
+                      {values.importSetting !== false && (
+                        <Select value={values.importSetting === true ? undefined : values.importSetting} onValueChange={(val) => setFieldValue("importSetting", val, true)}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Scegli la lista da copiare" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              {lists
+                                .toSorted((a, b) => {
+                                  const aFav = Number(a.favorite);
+                                  const bFav = Number(b.favorite);
+                                  if (a.favorite || b.favorite) {
+                                    return bFav - aFav;
+                                  }
+                                  return a.name.localeCompare(b.name);
+                                })
+                                .map((list) => {
+                                  const [, Icon] = getIcon(list.icon);
+                                  return (
+                                    <SelectItem value={list.id} key={list.id}>
+                                      {!!Icon && <Icon />}
+                                      {!Icon && list.favorite && <Star />}
+                                      {list.name}
+                                    </SelectItem>
+                                  );
+                                })}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      )}
+                      {errors.importSetting && <Label className={"text-chart-2"}>{errors.importSetting}</Label>}
                     </div>
                   </div>
                 </DialogHeader>

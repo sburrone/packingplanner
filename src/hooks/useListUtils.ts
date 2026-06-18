@@ -1,7 +1,7 @@
 import { ChangeEventHandler, useMemo, useState } from "react";
-import { Item, List, ListItem, Sorting } from "@/src/types";
-import { itemCollection, listCollection } from "@/src/db";
-import { eq, useLiveQuery } from "@tanstack/react-db";
+import { Item, ItemTag, List, ListItem, Sorting } from "@/src/types";
+import { itemCollection, listCollection, tagCollection } from "@/src/db";
+import { eq, useLiveQuery, WithVirtualProps } from "@tanstack/react-db";
 import _ from "lodash";
 import { useNavigate } from "@tanstack/react-router";
 import { ColorModel, ColorPaletteGenerator } from "@martinlaxenaire/color-palette-generator";
@@ -21,6 +21,7 @@ export const useListUtils = ({ listid }: { listid: string }) => {
   );
 
   const { data: itemOptions } = useLiveQuery((q) => q.from({ pref: itemCollection }));
+  const { data: allTags } = useLiveQuery((q) => q.from({ pref: tagCollection }));
 
   const handleCheck = (id: string, completed: boolean) => {
     listCollection.update(listid, (l) => {
@@ -61,47 +62,47 @@ export const useListUtils = ({ listid }: { listid: string }) => {
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
 
   const fullList = useMemo(() => {
-    const [iteratees, orders]: [(string | ((li: ListItem) => void))[], ("asc" | "desc")[]] = (() => {
-      switch (sorting) {
-        default:
-        case Sorting.ADDED_ASC:
-          return [[(li: ListItem) => currentList?.items.findIndex((el) => li.itemId === el.itemId)], ["asc"]] as const;
-        case Sorting.ADDED_DESC:
-          return [[(li: ListItem) => currentList?.items.findIndex((el) => li.itemId === el.itemId)], ["desc"]] as const;
-        case Sorting.ALPHA_ASC:
-          return [[(li: ListItem) => itemCollection.get(li.itemId)?.name ?? "", (li: ListItem) => currentList?.items.findIndex((el) => li.itemId === el.itemId)], ["asc"]];
-        case Sorting.ALPHA_DESC:
-          return [[(li: ListItem) => itemCollection.get(li.itemId)?.name ?? "", (li: ListItem) => currentList?.items.findIndex((el) => li.itemId === el.itemId)], ["desc"]];
-        case Sorting.TAGS_ASC:
-          return [
-            [
-              (li: ListItem) => {
-                const item = itemCollection.get(li.itemId);
-                const sortedTags = _.sortBy(item?.tags ?? [], "name");
-                return sortedTags[0];
-              },
-              (li: ListItem) => itemCollection.get(li.itemId)?.name,
-              (li: ListItem) => currentList?.items.findIndex((el) => li.itemId === el.itemId),
-            ],
-            ["asc"],
-          ];
-        case Sorting.TAGS_DESC:
-          return [
-            [
-              (li: ListItem) => {
-                const item = itemCollection.get(li.itemId);
-                const sortedTags = _.sortBy(item?.tags ?? [], "name");
-                return sortedTags[0];
-              },
-              (li: ListItem) => itemCollection.get(li.itemId)?.name,
-              (li: ListItem) => currentList?.items.findIndex((el) => li.itemId === el.itemId),
-            ],
-            ["desc"],
-          ];
-      }
-    })();
+    const mappedItems =
+      currentList?.items.map((el) => ({ full: itemCollection.get(el.itemId), listItem: el })).filter((el): el is { full: WithVirtualProps<Item, string>; listItem: ListItem } => !!el.full) ?? [];
 
-    return _.orderBy(currentList?.items ?? [], iteratees, orders);
+    const tagReducer = (acc: ListItem[], cur: ItemTag) => {
+      mappedItems
+        .filter((i) => i.full.tags.find((t) => t.id === cur.id))
+        .forEach((itemWithCurrentTag) => {
+          if (!acc.find((i) => i.itemId === itemWithCurrentTag.full.id)) {
+            acc.push(itemWithCurrentTag.listItem);
+          }
+        });
+      return acc;
+    };
+
+    switch (sorting) {
+      case Sorting.ADDED_ASC:
+      default:
+        return currentList?.items ?? [];
+      case Sorting.ADDED_DESC:
+        return currentList?.items.toReversed() ?? [];
+      case Sorting.ALPHA_ASC:
+        return (
+          currentList?.items.toSorted((a, b) => {
+            const mappedA = itemCollection.get(a.itemId);
+            const mappedB = itemCollection.get(b.itemId);
+            return mappedA?.name.localeCompare(mappedB?.name ?? "") ?? 0;
+          }) ?? []
+        );
+      case Sorting.ALPHA_DESC:
+        return (
+          currentList?.items.toSorted((a, b) => {
+            const mappedA = itemCollection.get(a.itemId);
+            const mappedB = itemCollection.get(b.itemId);
+            return mappedB?.name.localeCompare(mappedA?.name ?? "") ?? 0;
+          }) ?? []
+        );
+      case Sorting.TAGS_ASC:
+        return allTags.toSorted((a, b) => a.name.localeCompare(b.name)).reduce(tagReducer, [] as ListItem[]) ?? [];
+      case Sorting.TAGS_DESC:
+        return allTags.toSorted((a, b) => b.name.localeCompare(a.name)).reduce(tagReducer, [] as ListItem[]) ?? [];
+    }
   }, [currentList?.items, sorting]);
 
   const colorPalette = useMemo(() => {

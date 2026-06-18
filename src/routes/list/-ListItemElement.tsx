@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Pencil, Trash } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { FC, useState } from "react";
+import { FC, Fragment, useState } from "react";
 import { useIconResolver } from "@/src/icons/iconResolver";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import ObjectCreator from "@/src/components/ObjectCreator";
@@ -101,8 +101,8 @@ const ListItemElement: FC<ListItemElementProps> = (props) => {
                     };
 
               return (
-                <>
-                  <TooltipProvider key={tag.id}>
+                <Fragment key={tag.id}>
+                  <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Button variant={"reverse"} className={`h-7 w-7`} style={style} onClick={() => onTagSelect(tag.id)}>
@@ -115,7 +115,7 @@ const ListItemElement: FC<ListItemElementProps> = (props) => {
                     </Tooltip>
                   </TooltipProvider>
                   {index < item.tags.length - 1 && <ButtonGroupSeparator />}
-                </>
+                </Fragment>
               );
             })}
           </ButtonGroup>

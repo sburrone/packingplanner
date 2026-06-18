@@ -96,7 +96,11 @@ const IconPicker: FC<IconPickerProps> = (props) => {
   return (
     <Dialog>
       <DialogTrigger asChild={true}>
-        {!!dialogTrigger && typeof dialogTrigger !== "string" ? dialogTrigger : <Button>{typeof dialogTrigger === "string" ? dialogTrigger : "Icone"}</Button>}
+        {!!dialogTrigger && typeof dialogTrigger !== "string" ? (
+          dialogTrigger
+        ) : (
+          <Button className={value ? "bg-chart-5" : undefined}>{typeof dialogTrigger === "string" ? dialogTrigger : "Icone"}</Button>
+        )}
       </DialogTrigger>
       <DialogContent style={{ maxWidth: "calc(100dvw - 2rem)", maxHeight: "calc(100dvh - 2rem)" }}>
         <DialogHeader>

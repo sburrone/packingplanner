@@ -37,6 +37,7 @@ const FilterTagSelector: FC<FilterTagSelectorProps> = (props: FilterTagSelectorP
             const isSelected = selectedTagIds.includes(itemTag.id);
             return (
               <DropdownMenuCheckboxItem
+                key={itemTag.id}
                 checked={isSelected}
                 onCheckedChange={() => {
                   onSelectedTagIdsChange(isSelected ? selectedTagIds.filter((t) => t !== itemTag.id) : [...selectedTagIds, itemTag.id]);

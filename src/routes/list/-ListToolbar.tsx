@@ -1,6 +1,6 @@
 import { ButtonGroup, ButtonGroupSeparator } from "@/components/ui/button-group";
 import { FC } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Check, Home, Pencil, RotateCcw, Trash } from "lucide-react";
 import SortingSelector from "@/src/components/SortingSelector";
@@ -35,14 +35,14 @@ interface ListToolbarProps {
 const ListToolbar: FC<ListToolbarProps> = (props) => {
   const { itemTagsInList, selectedTagIds, onSelectedTagIdsChange, isEditing, toggleEditing, handleGroupCompletedChange, handleSortingChange, sorting, groupCompleted, batchReset, deleteList } = props;
 
+  const navigate = useNavigate();
+
   return (
     <div className={"flex flex-row justify-between w-full mb-4"}>
       <ButtonGroup>
-        <Link to={`/`}>
-          <Button>
-            <Home />
-          </Button>
-        </Link>
+        <Button onClick={() => navigate({ to: "/" })}>
+          <Home />
+        </Button>
         <ButtonGroupSeparator />
         <Button className={isEditing ? "bg-chart-4" : undefined} onClick={toggleEditing}>
           {isEditing ? (
