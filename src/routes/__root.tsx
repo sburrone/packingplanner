@@ -10,7 +10,7 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   const prefersDark = useMediaQuery("(prefers-color-scheme: dark)", {});
-  const { setTheme, theme } = useTheme();
+  const { setTheme } = useTheme();
 
   useEffect(() => {
     setTheme(prefersDark ? "dark" : "light");
